@@ -6,8 +6,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors({
+  origin: "*",
   origin: ["https://medlembrete-frontend-7wuey5cdo-rodrigolopes76s-projects.vercel.app", "http://localhost:5173"], // Adicione aqui a URL da sua Vercel
   methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
   credentials: true
 }));
 app.use(express.json());
