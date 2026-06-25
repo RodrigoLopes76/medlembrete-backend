@@ -1,6 +1,6 @@
 require('dotenv').config();
-const express = require('express');
 const cors = require('cors');
+const express = require('express');
 const fs = require('fs');
 const path = require('path');
 
@@ -10,7 +10,8 @@ const PORT = process.env.PORT || 3000;
 // Middleware para JSON e CORS
 app.use(express.json());
 app.use(cors({
-  origin: ["https://medlembrete-frontend-7wuey5cdo-rodrigolopes76s-projects.vercel.app", "http://localhost:5173"],
+  origin: ["https://medlembrete-frontend-o9wr85qdy-rodrigolopes76s-projects.vercel.app", 
+    "https://medlembrete-frontend-7wuey5cdo-rodrigolopes76s-projects.vercel.app", "http://localhost:5173"],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
