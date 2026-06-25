@@ -1,59 +1,44 @@
-﻿require('dotenv').config();
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Middleware para JSON e CORS
+app.use(express.json());
 app.use(cors({
-  // Mantenha apenas uma definição de origin
   origin: ["https://medlembrete-frontend-7wuey5cdo-rodrigolopes76s-projects.vercel.app", "http://localhost:5173"],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Adicione OPTIONS aqui
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 }));
 
-app.use(express.json());
+// Banco de dados em memória (simples para o protótipo)
+const usuarios = [];
 
-const dataDir = path.join(__dirname, '../data');
-if (!fs.existsSync(dataDir)){
-    fs.mkdirSync(dataDir);
-}
-
-// Simulação de banco de dados em memória (para o seu protótipo)
-const usuarios = []; 
-
-// ROTA DE CADASTRO
+// --- ROTAS DE AUTENTICAÇÃO ---
 app.post('/auth/cadastro', (req, res) => {
     const { nome, email, senha } = req.body;
-    
-    // Verifica se usuário já existe
-    const existe = usuarios.find(u => u.email === email);
-    if (existe) return res.status(400).json({ erro: "Usuário já cadastrado." });
-
-    const novoUsuario = { nome, email, senha };
-    usuarios.push(novoUsuario);
-    
-    console.log("Usuário cadastrado:", nome);
-    res.status(201).json({ mensagem: "Cadastro realizado com sucesso!" });
+    if (usuarios.find(u => u.email === email)) {
+        return res.status(400).json({ erro: "Usuário já existe." });
+    }
+    usuarios.push({ nome, email, senha });
+    res.status(201).json({ mensagem: "Cadastro realizado!" });
 });
 
-// ROTA DE LOGIN
 app.post('/auth/login', (req, res) => {
     const { email, senha } = req.body;
-    
     const usuario = usuarios.find(u => u.email === email && u.senha === senha);
-    if (!usuario) return res.status(401).json({ erro: "Email ou senha incorretos." });
-
-    res.json({ mensagem: "Login realizado!", token: "fake-jwt-token" });
+    if (!usuario) return res.status(401).json({ erro: "Email ou senha inválidos." });
+    res.json({ mensagem: "Login efetuado!", token: "fake-jwt" });
 });
 
-// Rota de consulta de medicamentos
+// --- ROTA DE MEDICAMENTOS ---
 app.get('/api/medicamentos', async (req, res) => {
-    const { nome } = req.query;
-    console.log(`Buscando medicamento: ${nome}`);
-    res.json({ mensagem: "Conexão com ANVISA configurada", termo: nome });
+    res.json({ mensagem: "Conexão com ANVISA configurada" });
 });
 
 app.listen(PORT, () => {
