@@ -21,6 +21,34 @@ if (!fs.existsSync(dataDir)){
     fs.mkdirSync(dataDir);
 }
 
+// Simulação de banco de dados em memória (para o seu protótipo)
+const usuarios = []; 
+
+// ROTA DE CADASTRO
+app.post('/auth/cadastro', (req, res) => {
+    const { nome, email, senha } = req.body;
+    
+    // Verifica se usuário já existe
+    const existe = usuarios.find(u => u.email === email);
+    if (existe) return res.status(400).json({ erro: "Usuário já cadastrado." });
+
+    const novoUsuario = { nome, email, senha };
+    usuarios.push(novoUsuario);
+    
+    console.log("Usuário cadastrado:", nome);
+    res.status(201).json({ mensagem: "Cadastro realizado com sucesso!" });
+});
+
+// ROTA DE LOGIN
+app.post('/auth/login', (req, res) => {
+    const { email, senha } = req.body;
+    
+    const usuario = usuarios.find(u => u.email === email && u.senha === senha);
+    if (!usuario) return res.status(401).json({ erro: "Email ou senha incorretos." });
+
+    res.json({ mensagem: "Login realizado!", token: "fake-jwt-token" });
+});
+
 // Rota de consulta de medicamentos
 app.get('/api/medicamentos', async (req, res) => {
     const { nome } = req.query;
