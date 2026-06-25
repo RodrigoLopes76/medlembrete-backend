@@ -9,13 +9,16 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware para JSON e CORS
 app.use(express.json());
-app.use(cors({
-  origin: ["https://medlembrete-frontend-o9wr85qdy-rodrigolopes76s-projects.vercel.app", 
-    "https://medlembrete-frontend-7wuey5cdo-rodrigolopes76s-projects.vercel.app", "http://localhost:5173"],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true
-}));
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*"); // Permite qualquer origem temporariamente para testar
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
 
 // Banco de dados em memória (simples para o protótipo)
 const usuarios = [];
